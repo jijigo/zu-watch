@@ -1,5 +1,5 @@
 <template>
-    <div id="index">
+    <div id="customize">
         <div class="zu-title flex-ac-jc- logo-mobil-black">
             <a class="zu-title" href="https://www.zu-watch.com/">
                 <span class="logo">
@@ -17,5 +17,7 @@ export default {
 </script>
 
 <style lang="scss">
+
+$white: #fff;
 
 </style>

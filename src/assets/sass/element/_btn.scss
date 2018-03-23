@@ -1,0 +1,237 @@
+[class*='btn'] {
+	cursor: pointer;
+	user-select: none;
+  text-align: center;  
+}
+
+.calltoaction-btn {
+  display: inline-block;
+  width: 120px;
+  visibility: visible;
+	@media screen and (max-width: $breakpoint-nav-transform) {
+		position: fixed;
+		top: 5px;
+		right: 3%;
+	}
+}
+
+.delete-btn {
+	// display: none;
+	position: absolute;
+	width: 15px;
+	top: 5px;
+	right: 5px;
+	z-index: 2;
+	&.null {
+		display: none;
+	}
+}
+
+.zuwatch-btn {
+	max-width: 120px;
+	background-color: #fff;
+	line-height: 35px;
+	height: 35px;
+	font-size: 13px;
+	color: rgba(0,0,0,.9);
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
+	margin: 0 auto;
+	border-radius: 4px;
+	transition: .3s ease;
+	i {
+		margin-right: 5px;
+		color: rgba(0,0,0,.5);
+	}
+	&#prev i, &#next i {
+		margin-right: 0;
+	}
+	&:hover {
+		background-color: #1D1D1D;
+		color: #fff;
+		i {
+			color: #fff;
+		}
+	}
+}
+.zuwatch-btn.null {
+	pointer-events: none;
+	opacity: .4;
+}
+
+.step-btn {
+	flex: 0 0 46px;
+	width: 46px;
+	margin: 5px;
+}
+
+.save-btn {
+	margin: 5px;
+	width: 120px;
+	max-width: calc( 100% - 100px );
+	transition: .2s ease;
+}
+.save-btn:active {
+	transform: translateY(3px);
+}
+
+.code-btn {
+	display: inline-block;
+	vertical-align: middle;
+	width: calc( 50% - 10px );
+	margin: 5px;
+	line-height: 40px;
+	background-color: rgba(0,0,0,.2);
+	font-size: 15px;
+	letter-spacing: .5px;
+	border-radius: 5px;
+}
+
+.share-btn {
+	width: calc( 100% - 10px );
+	margin: 5px;
+	line-height: 40px;
+	font-size: 15px;
+	letter-spacing: .5px;
+	background-color: $main;
+	border-radius: 20px;
+	i {
+		margin-right: 5px;
+	}
+}
+
+.add-this-btn {
+	border-radius: 3px;
+	background-color: #fff;
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
+	color: rgba(0,0,0,.8);
+	font-family: $fontp;
+	font-size: 12px;
+	line-height: 20px;
+	margin-top: 4px;
+	&:hover {
+		background-color: rgba(0,0,0,.8);
+		color: #fff;
+	}
+}
+
+#cart-code-btn {
+	cursor: pointer;
+	position: absolute;
+	color: #fff;
+	font-family: $fontp;
+	text-align: center;
+	width: 80px;
+	font-size: 12px;
+	line-height: 25px;
+	right: 5px;
+	top: 6px;
+	pointer-events: none;
+	background-color: rgba(0,0,0,.8);
+	box-shadow: inset 0 0 0 2px rgba(0,0,0,.2);
+	.pg {
+		position: absolute;
+		left: 0;
+		bottom: 0px;
+		height: 3px;
+		transition: .3s ease;
+		z-index: 1;
+		background-color: #7ED321;
+	}
+	&.ok {
+		pointer-events: visible;
+		background-color: #7ED321;
+		color: #fff;
+		animation: bring 1.5s ease 0s infinite both;
+	}
+}
+.cart-price-section #cart-code-btn {
+	position: relative;
+	flex: 0 0 auto;
+	width: 140px;
+	height: 37px;
+  line-height: 37px;
+  right: auto;
+  top: 0;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	font-family: $fontt;
+	font-size: 12px;
+	animation-name: none;
+}
+#random-this-cart {
+	cursor: pointer;
+	position: absolute;
+	color: #fff;
+	font-family: $fontp;
+	text-align: center;
+	width: 80px;
+	font-size: 12px;
+	line-height: 25px;
+	right: 90px;
+	top: 6px;
+	display: none;
+	background-color: #E89547;
+	box-shadow: inset 0 -3px 0 0 rgba(0,0,0,.07);
+	img {
+		height: 15px;
+		width: auto;
+		vertical-align: middle;
+		margin-right: 2px;
+	}
+	&.ok {
+		display: block;
+	}
+}
+@media screen and (max-width: 992px ) {
+	#random-this-cart.ok { display: none; }
+}
+
+@keyframes bring {
+	0% { box-shadow: inset 0px 0 0px 0 rgba(255,255,255,0) }
+	50% { box-shadow: inset 80px 0 30px 0 rgba(255,255,255,.3) }
+	100% { box-shadow: inset 200px 0 100px 0 rgba(255,255,255,0) }
+}
+
+
+#mockup-area .zu-title {
+	position: absolute;
+	z-index: 11;
+	top: 10px;
+	right: 0;
+	left: 0;
+	width: 140px;
+}
+@media screen and (max-width: 992px) {
+	#preview .mockup-btns {
+		display: none;
+	}
+}
+#mockup-area .mockup-btns {
+	position: absolute;
+	z-index: 10;
+	top: 70px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	.mockup-btn {
+		display: inline-block;
+		width: 140px;
+		font-size: 15px;
+	}
+}
+#mockup-area .back {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 5;
+}
+#mockup-area .back .zuwatch-btn {
+	position: absolute;
+	bottom: 50px;
+	width: 140px;
+	font-size: 15px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	z-index: 10;
+}
