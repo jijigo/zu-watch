@@ -1,0 +1,46 @@
+{
+  "parser": "vue-eslint-parser",
+  "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": true
+  },
+  "parserOptions": {
+      "parser": "babel-eslint",
+      "ecmaVersion": 6,
+      "ecmaFeatures": {
+          "jsx": true
+      },
+      "sourceType": "module"
+  },
+  "extends": [
+      "eslint:recommended",
+      "plugin:vue/recommended"
+  ],
+  "rules": {
+      "vue/html-indent": [
+              "error", 4, {
+              "attribute": 1,
+              "closeBracket": 0,
+              "ignores": []
+          }
+      ],
+      "vue/attributes-order": ["warn"],
+      "indent": ["error", 4, {
+          "SwitchCase": 1
+      }],
+      "quotes": ["error", "single"],
+      "semi": ["error", "always"],
+      "no-console": ["error"],
+      "no-const-assign": "warn",
+      "no-this-before-super": "warn",
+      "no-undef": "warn",
+      "no-unreachable": "warn",
+      "no-unused-vars": "warn",
+      "constructor-super": "warn",
+      "valid-typeof": "warn",
+      "eqeqeq": "warn",
+      "no-trailing-spaces": ["error", { "skipBlankLines": true }]
+  }
+}
