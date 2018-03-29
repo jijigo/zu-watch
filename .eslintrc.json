@@ -27,6 +27,7 @@
           }
       ],
       "vue/attributes-order": ["warn"],
+      "vue/require-v-for-keys": 0,
       "indent": ["error", 4, {
           "SwitchCase": 1
       }],

@@ -16,6 +16,7 @@
             style="position: relative">
             <left/>
             <mid/>
+            <right/>
         </div>
     </div>
 
@@ -24,13 +25,15 @@
 <script>
 import left from '@/components/left';
 import mid from '@/components/mid';
+import right from '@/components/right';
+
 
 export default {
     components: {
-        left, mid
+        left, mid, right
     },
     created() {
-        
+        this.$store.dispatch('fetchData');
     }
 
 };

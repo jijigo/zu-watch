@@ -43,7 +43,7 @@
             <div
                 class=" bottom-box normal-box flex-l4-jfs-ac-">
                 <div
-                    v-for="item, index in $store.state.saveItems"
+                    v-for="(item, index) in $store.state.saveItems"
                     :key="index"
                     class="save-box">
                     <div
@@ -57,7 +57,7 @@
                         @click="$store.dispatch('changePreview', item)"
                         class="btn preview-show-body">
                         <img
-                            v-for="value, key, index in item"
+                            v-for="(value, key, index) in item"
                             :key="index"
                             :class="`preview-${index+1}`"
                             :src="`https://s3cdn.backer-founder.com/lp/zuwatch/img/main/product/pv-${key}/${value}.png`"
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import store from '@/store/index';
+// import store from '@/store/index';
 export default {
     name: 'Left',
     data () {

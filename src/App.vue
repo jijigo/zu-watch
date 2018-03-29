@@ -1,6 +1,10 @@
 <template>
     <div id="app">
-        <router-view/>
+        <div
+            id="zu-watch"
+            :class="location">
+            <router-view/>
+        </div>
     </div>
 </template>
 
@@ -8,7 +12,12 @@
 import store from '@/store/index';
 export default {
     name: 'App',
-    store
+    store,
+    computed: {
+        location() {
+            return `location_${store.state.locale}`;
+        }
+    }
 };
 </script>
 

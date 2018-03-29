@@ -53,7 +53,7 @@
             </div>
             <div class="bottom-box preview-btns">
                 <div
-                    @click="$store.dispatch('saveElements')"
+                    @click="$store.dispatch('saveElements', $store.state.preview)"
                     id="save"
                     class="zuwatch-btn save-btn">
                     <i
@@ -61,15 +61,15 @@
                         aria-hidden="true"/>
                     Save
                 </div>
-                <!-- <div
+                <div
                     id="random"
-                    @click="twRandomElements"
+                    @click="$store.dispatch('getRandomElements')"
                     class="zuwatch-btn save-btn active">
                     <i
                         class="fa fa-random"
                         aria-hidden="true"/>
                     Random
-                </div> -->
+                </div>
                 <!-- <div
                     v-if="status !== 'unlimited'"
                     id="checkcart"

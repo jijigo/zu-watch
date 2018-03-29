@@ -6,6 +6,7 @@ import router from './router';
 
 import '../src/assets/sass/app.scss';
 
+// Vue.use(axios);
 Vue.config.productionTip = false;   // ?
 
 /* eslint-disable no-new */
