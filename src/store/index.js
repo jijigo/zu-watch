@@ -138,8 +138,8 @@ export default new Vuex.Store({
             context.commit('deleteCartItems', [cartType, category]);
         },
         // 取得隨機組合
-        getRandomElements(context) {
-            context.commit('setRandomElements');
+        getRandomElements({commit, getters}) {
+            commit('setRandomElements', getters);
         }
     },
     mutations: {
@@ -172,10 +172,10 @@ export default new Vuex.Store({
                 }
             });
         },
-        setRandomElements(state) {
-            ['case', 'dial', 'strap'].forEach((item) => {
-                let el = state.elements[item];
-                state.preview[item] = el[Math.floor(Math.random() * el.length)].tags[0];
+        setRandomElements(state, getters) {
+            ['case', 'dial', 'strap'].forEach((category) => {
+                let el = getters.elementsByCategories[category];
+                state.preview[category] = el[Math.floor(Math.random() * el.length)].tags[0];
             });
         },
         updatePreview(state, element) {
