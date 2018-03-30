@@ -162,27 +162,29 @@
                     <div id="mobile-double-set-hint">
                         <i class="fa fa-angle-down"/>
                     </div>
-                    <!-- @click="doubleWhichChange(1)" -->
                     <div
-                        :class="{ active: $store.state.cart.doubleWhich === 1 }"
-                        class="cart-content-set-wrap cart-content-basic-set flex-l4-jfs-afs-">
+                        v-for="(displayItems, index) in cartDisplay"
+                        :key="index"
+                        :class="{ active: $store.state.cart.doubleWhich === index + 1 }"
+                        class="cart-content-set-wrap cart-content-basic-set flex-l4-jfs-afs-"
+                        @click="$store.dispatch('changeDoubleWhich', index + 1)">
                         <div
                             v-for="(category, index) in ['case', 'dial', 'strap']"
                             :key="index"
                             class="cart-item">
-                            <template v-if="$store.state.cart[cartType][category]">
+                            <template v-if="$store.state.cart[displayItems][category]">
                                 <div
                                     class="delete-btn"
-                                    @click="$store.dispatch('deleteElementsFromCart', ['basic', category])">
+                                    @click="$store.dispatch('deleteElementsFromCart', [displayItems, category])">
                                     <!-- {{ cart.basic.a1 }} -->
                                     <img
                                         src="https://s3cdn.backer-founder.com/lp/zuwatch/img/common/icons/delete.svg"
                                         alt="">
                                 </div>
                                 <img
-                                    :src="cartThumbnail(cartType, category)"
+                                    :src="cartThumbnail(displayItems, category)"
                                     alt=""
-                                    @click="$store.dispatch('changePreview', {[category]: $store.state.cart[cartType][category]})">
+                                    @click="$store.dispatch('changePreview', {[category]: $store.state.cart[displayItems][category]})">
                                     <!-- <span class="cart-item-price">
                                     {{ $store.state.currency + $store.getters.elementsByTag[$store.state.cart[cartType][category]].price }}
                                 </span> -->
@@ -211,10 +213,10 @@
                         </div> -->
                     </div>
                     <!-- <div
+                        v-if="cartType === 'double'"
+                        :class="{ active: doubleWhich === 2 }"
                         class="cart-content-set-wrap cart-content-double-set flex-l4-jfs-afs-"
-                        v-if="status === 'double'"
-                        @click="doubleWhichChange(2)"
-                        :class="{ active: cart.doubleWhich === 2 }">
+                        @click="doubleWhich = 2">
                         <div class="cart-item {{ cart.double.a1 }}">
                             <div
                                 @click="deleteCartElement('double', 'a1')"
@@ -358,8 +360,19 @@ export default {
     data() {
         return {
             activeTab: 'case',
-            cartType: 'basic'
+            cartType: 'basic',
+            doubleWhich: 1
         };
+    },
+    computed: {
+        cartDisplay() {
+            if(this.cartType === 'basic') {
+                return ['basic'];
+            } else if (this.cartType === 'double') {
+                return ['basic', 'double'];
+            }
+
+        }
     },
     methods: {
         cartThumbnail(cartType, category) {

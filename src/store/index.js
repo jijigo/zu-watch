@@ -122,9 +122,13 @@ export default new Vuex.Store({
                 })
                 .catch((error) => Promise.reject(error));
         },
-        changePreview(context, element) {
-            context.commit('updatePreview', element);
-            context.commit('pushToCart', element);
+        changePreview(context, elements) {
+            context.commit('updatePreview', elements);
+            //
+            context.commit('pushToCart', {
+                style: 'basicOrDouble',
+                value: elements
+            });
         },
         // 儲存預覽商品
         saveElements(context, preview) {
@@ -140,6 +144,10 @@ export default new Vuex.Store({
         // 取得隨機組合
         getRandomElements({commit, getters}) {
             commit('setRandomElements', getters);
+        },
+
+        changeDoubleWhich({commit}, index) {
+            commit('changeDoubleWhich', index);
         }
     },
     mutations: {
@@ -192,11 +200,16 @@ export default new Vuex.Store({
         deleteCartItems(state, [cartType, category]) {
             state.cart[cartType][category] = '';
         },
-        pushToCart(state, elements) {
-            // state.cart.basic = elements;
-            Object.keys(elements).forEach((key) => {
-                state.cart.basic[key] = elements[key];
-            });
+        pushToCart(state, payload) {
+            if(payload.style === 'basicOrDouble') {
+                let cartType = state.cart.doubleWhich === 1 ? 'basic' : 'double';
+                Object.keys(payload.value).forEach((key) => {
+                    state.cart[cartType][key] = payload.value[key];
+                });
+            }
+        },
+        changeDoubleWhich (state, index) {
+            state.cart.doubleWhich = index;
         }
 
     }
