@@ -2,6 +2,8 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import Vue from 'vue';
 
+/* global _ */
+
 Vue.use(Vuex, axios);
 
 export default new Vuex.Store({
@@ -12,18 +14,11 @@ export default new Vuex.Store({
             strap: 'lc-01'   // 錶帶
         },
         saveItems: [],
-        elements: {
-            case: [],
-            dial: [],
-            strap: [],
-            backCase: [],
-            others: [],
-            collection: []
-        },
         elementsAll: [],
         locale: 'tw',
         currency: 'NT',
         cart: {
+            selected: 'basic',
             basic: { case: 'ca-01', dial: 'zu-01-w', strap: 'lc-01' },
             /// double 會保留 basic，額外再多一組 SET
             double: { case: null, dial: null, strap: null },
@@ -31,9 +26,9 @@ export default new Vuex.Store({
             unlimited: [],
             /// 這個 common 是給台灣地區，有 backCase & others 配件
             common: {
-                backCase: 'backcase-01',
-                doubleSetBackCase: 'backcase-01',
-                others: ['', '', '', '']
+                backCase: '',
+                doubleSetBackCase: '',
+                others: []
             },
             /// 這個欄位是當 double set 的時候，選取配件是第一組手錶還是第二組
             doubleWhich: 1
@@ -70,7 +65,7 @@ export default new Vuex.Store({
                     if (el.tags[0] !== 'backcase-01') {
                         obj.backCase.push(el);
                     }
-                } else if (el.category == 'others') {
+                } else if (el.category === 'others') {
                 // hotfixed to hide the buckle
                 // 為了防止 production 受影響
                     if (el.tags[0] !== 'customize-buckle') {
@@ -107,7 +102,117 @@ export default new Vuex.Store({
             });
             return newApiObject;
 
+        },
+
+        totalAmount(state, getters) {
+            if(Object.keys(getters.elementsByTag).length === 0) return;
+            if(state.cart.selected === 'basic') {
+                let basicSet = [
+                    ...Object.values(state.cart.basic),
+                    state.cart.common.backCase,
+                ];
+                
+                return _.reduce(_.compact(basicSet), (init, current) => {
+                    return init + getters.elementsByTag[current].price;
+                }, 0);
+            }
+            else if(state.cart.selected === 'double') {
+                let doubleSet = [
+                    ...Object.values(state.cart.basic),
+                    ...Object.values(state.cart.double),
+                    state.cart.common.backCase,
+                    state.cart.common.doubleSetBackCase,
+                ];
+                return _.reduce(_.compact(doubleSet), (init, current) => {
+                    return init + getters.elementsByTag[current].price;
+                }, 0);
+            }
+            if(state.cart.selected === 'unlimited') {
+                return _.reduce(_.compact(Object.values(state.cart.unlimited)), (init, current) => {
+                    return init + getters.elementsByTag[current].price;
+                }, 0);
+            }
+        },
+        // 訂單整理
+        order(state, getters) {
+            if(Object.keys(getters.elementsByTag).length === 0) return;
+            if (state.locale !== 'tw' && state.locale !== 'global') return;
+            let valueArray = [];
+            let cartStuff = state.cart[state.cart.selected];   // basic, double, unlimited
+
+            Object.values(cartStuff).forEach(function(item) {
+                if (item) {
+                    valueArray.push({
+                        id: getters.elementsByTag[item].id,
+                        code: item,
+                        name: getters.elementsByTag[item].name,
+                        price: getters.elementsByTag[item].price,
+                        stock: getters.elementsByTag[item].stock,
+                        note: 'THE FIRST SET'
+                    });
+                }
+            });
+            // 處理 CRAFT, 過去稱 BACKCASE(因為欄位變動)
+            if (state.cart.selected !== 'unlimited') {
+                let backCase = state.cart.common.backCase; // 背殼
+                if (backCase) {
+                    valueArray.push({
+                        id: getters.elementsByTag[backCase].id,
+                        code: backCase,
+                        name: getters.elementsByTag[backCase].name,
+                        price: getters.elementsByTag[backCase].price,
+                        stock: getters.elementsByTag[backCase].stock,
+                        note: 'THE FIRST SET'
+                    });
+                }
+            }
+
+            /// DOUBLE SET 要把 BASIC SET 也算進去
+            if (state.cart.selected === 'double') {
+                var basicCartStuff = state.cart['basic'];
+                Object.values(basicCartStuff).forEach(function(item) {
+                    if (item) {
+                        valueArray.push({
+                            id: getters.elementsByTag[item].id,
+                            code: item,
+                            name: getters.elementsByTag[item].name,
+                            price: getters.elementsByTag[item].price,
+                            stock: getters.elementsByTag[item].stock,
+                            note: 'THE SECOND SET'
+                        });
+                    }
+                });
+                // 處理 CRAFT, 過去稱 BACKCASE(因為欄位變動)
+                let doubleSetBackCase = state.cart.common.doubleSetBackCase; // 背殼
+                if(doubleSetBackCase) {
+                    valueArray.push({
+                        id: getters.elementsByTag[doubleSetBackCase].id,
+                        code: doubleSetBackCase,
+                        name: getters.elementsByTag[doubleSetBackCase].name,
+                        price: getters.elementsByTag[doubleSetBackCase].price,
+                        stock: getters.elementsByTag[doubleSetBackCase].stock,
+                        note: 'THE SECOND SET'
+                    });
+                }
+            }
+            
+            return valueArray;
+        },
+
+        calcElementsInCart(state) {
+            let volumeOfCart = _.compact(Object.values(state.cart[state.cart.selected])).length;
+
+            if(state.cart.selected === 'basic') {
+                let volumeOfCart = _.compact(Object.values(state.cart.basic)).length;
+                return volumeOfCart >= 3 ? 'CHECKOUT' : `${volumeOfCart} / 3`;
+            } else if(state.cart.selected === 'double') {
+                let volumeOfCart = _.compact([...Object.values(state.cart.basic), ...Object.values(state.cart.double)]).length;
+                return volumeOfCart >= 6 ? 'CHECKOUT' : `${volumeOfCart} / 6`;
+            } else {
+                return volumeOfCart >= 1 ? 'CHECKOUT' : `${volumeOfCart} / 1`;
+            }
         }
+
         
     },
     actions: {  // methods
@@ -116,7 +221,6 @@ export default new Vuex.Store({
 
             axios.get(url)
                 .then((response) => {
-                    // console.log(response.data);
                     let publishEl = response.data.rewards.filter((el) => el.status === 'publish');
                     context.commit('setElements', publishEl);
                 })
@@ -148,37 +252,22 @@ export default new Vuex.Store({
 
         changeDoubleWhich({commit}, index) {
             commit('changeDoubleWhich', index);
+        },
+
+        addToCart({commit}, [style, value]) {
+            commit('pushToCart', {
+                style: style,
+                value: value
+            });
+        },
+
+        cartSelect({commit}, type) {
+            commit('changeCartSelected', type);
         }
     },
     mutations: {
         setElements(state, elements) {
             state.elementsAll = elements;
-            elements.forEach((el) => {
-            // 將 api 回饋物件們分類到 vue 裡，方便後續取得
-                if (el.category === 'case') {
-                    state.elements.case.push(el);
-                } else if (el.category == 'dial') {
-                    state.elements.dial.push(el);
-                } else if (el.category == 'strap') {
-                    state.elements.strap.push(el);
-                } else if (el.category == 'craft') {
-                // hotfixed to hide the backcase-01
-                // 為了防止 production 受影響
-                    if (el.tags[0] !== 'backcase-01') {
-                        state.elements.backCase.push(el);
-                    }
-                } else if (el.category == 'others') {
-                // hotfixed to hide the buckle
-                // 為了防止 production 受影響
-                    if (el.tags[0] !== 'customize-buckle') {
-                        state.elements.others.push(el);
-                    } else {
-                        state.elements.backCase.push(el);
-                    }
-                } else if (el.category == 'collection') {
-                    state.elements.collection.push(el);
-                }
-            });
         },
         setRandomElements(state, getters) {
             ['case', 'dial', 'strap'].forEach((category) => {
@@ -198,7 +287,14 @@ export default new Vuex.Store({
             state.saveItems.splice(pos, 1);  // 刪除一個
         },
         deleteCartItems(state, [cartType, category]) {
-            state.cart[cartType][category] = '';
+            if(cartType === 'unlimited') {
+                state.cart.unlimited.splice(category, 1);
+            } else {
+                state.cart[cartType][category] = '';
+            }
+        },
+        deleteOtherCartElement(index) {
+            this.cart.unlimited.splice(index, 1);
         },
         pushToCart(state, payload) {
             if(payload.style === 'basicOrDouble') {
@@ -207,10 +303,20 @@ export default new Vuex.Store({
                     state.cart[cartType][key] = payload.value[key];
                 });
             }
+            if(payload.style === 'common') {
+                let doubleWhich = state.cart.doubleWhich === 1 ? 'backCase' : 'doubleSetBackCase';
+                state.cart.common[doubleWhich] = payload.value;
+            }
+            if(payload.style === 'others') {
+                state.cart.unlimited.push(payload.value);
+            }
         },
         changeDoubleWhich (state, index) {
             state.cart.doubleWhich = index;
-        }
-
+        },
+        // 變更選擇的購物車
+        changeCartSelected(state, type) {
+            state.cart.selected = type;
+        },
     }
 });

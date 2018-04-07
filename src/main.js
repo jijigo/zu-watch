@@ -5,6 +5,7 @@ import App from './App';
 import router from './router';
 
 import '../src/assets/sass/app.scss';
+const _ = require('lodash');
 
 // Vue.use(axios);
 Vue.config.productionTip = false;   // ?
