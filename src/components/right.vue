@@ -1,5 +1,8 @@
 <template>
     <section class="right">
+        <popup
+            :element="selectedElement"
+            @clearElement="selectedElement = null"/>
         <div id="elements">
             <div class="top-box normal-box">
                 <div class="elements-tabbar flex-ac-jfs-nw-">
@@ -29,7 +32,7 @@
                             class="e-c-b-c"
                             @click="$store.dispatch('changePreview', {[category]: item.tags[0]})">
                             <div
-                                :data-details="item.tags[0]"
+                                @click="getDetails(item)"
                                 class="e-c-b-c-top-bar">
                                 <span><i
                                     class="fa fa-search-plus"
@@ -324,35 +327,18 @@
 </template>
 
 <script>
-import store from '@/store/index';
+import popup from '@/components/popup';
 
 export default {
-  
-    filters: {
-        // taiwan
-        in_stock: function(v) {
-            if (v.quantity_limit === 0) {
-                return 'sufficient stock';
-            } else {
-                var in_stock_count = v.quantity_limit - (v.pledged_count + v.wait_pledged_count);
-                if (in_stock_count >= 5) {
-                    var in_stock_count = 'sufficient stock';
-                } else if (in_stock_count >= 2) {
-                    var in_stock_count = 'low quantity';
-                } else if (in_stock_count >= 0) {
-                    var in_stock_count = 'out of stock';
-                }
-                return in_stock_count;
-            }
-        }
-       
+    name: 'Right',
+    components: {
+        popup
     },
-
     data() {
         return {
             activeTab: 'case',
-            // cartType: 'basic',
-            doubleWhich: 1
+            doubleWhich: 1,
+            selectedElement: null
         };
     },
     computed: {
@@ -393,6 +379,10 @@ export default {
             } else {
                 this.$store.dispatch('addToCart', ['others', val]);
             }
+        },
+        
+        getDetails(el) {
+            this.selectedElement = el;
         },
 
         // 送出表單
