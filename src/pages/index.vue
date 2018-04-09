@@ -18,6 +18,9 @@
             <mid/>
             <right/>
         </div>
+        <footer>
+            COPYRIGHTS  ©  Zu WATCH ™ 2017
+        </footer>
     </div>
 
 </template>
