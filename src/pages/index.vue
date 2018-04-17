@@ -21,6 +21,7 @@
         <footer>
             COPYRIGHTS  ©  Zu WATCH ™ 2017
         </footer>
+        <mockup/>
     </div>
 
 </template>
@@ -29,14 +30,18 @@
 import left from '@/components/left';
 import mid from '@/components/mid';
 import right from '@/components/right';
-
+import mockup from '@/components/mockup';
 
 export default {
     components: {
-        left, mid, right
+        left, mid, right, mockup
     },
     created() {
         this.$store.dispatch('fetchData');
+    },
+    mounted() {
+        console.log('loaded');
+        this.$store.dispatch('onLoading', false);
     }
 
 };
