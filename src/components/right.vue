@@ -1,5 +1,7 @@
 <template>
-    <section class="right">
+    <section
+        :class="{'bigger': cartBigger}"
+        class="right">
         <popup
             :element="selectedElement"
             @clearElement="selectedElement = null"/>
@@ -18,7 +20,6 @@
                 <div
                     class="elements-content">
                     <div
-                        v-if="activeTab === 'case' || activeTab === 'dial' || activeTab === 'strap'"
                         v-for="(category, index) in ['case', 'dial', 'strap']"
                         :key="index"
                         :data-tab="category"
@@ -32,8 +33,8 @@
                             class="e-c-b-c"
                             @click="$store.dispatch('changePreview', {[category]: item.tags[0]})">
                             <div
-                                @click="getDetails(item)"
-                                class="e-c-b-c-top-bar">
+                                class="e-c-b-c-top-bar"
+                                @click="getDetails(item)">
                                 <span><i
                                     class="fa fa-search-plus"
                                     aria-hidden="true"/>Details</span>
@@ -67,7 +68,7 @@
                             :data-selected="cb.tags[0]"
                             class="e-c-b-c">
                             <div
-                                :data-details="cb.tags[0]"
+                                @click="getDetails(cb)"
                                 class="e-c-b-c-top-bar">
                                 <span>
                                     <i
@@ -108,7 +109,7 @@
                             class="e-c-b-c">
                             <div
                                 class="e-c-b-c-top-bar"
-                                :data-details="o.tags[0]">
+                                @click="getDetails(o)">
                                 <span><i
                                     class="fa fa-search-plus"
                                     aria-hidden="true"/>Details</span>
@@ -125,23 +126,28 @@
                             </span>
                             <div
                                 v-if="cartType === 'unlimited'"
-                                @click="elementAddOtherCartAndChangeStatus(o.tags[0])"
-                                class="add-this-btn">ADD TO CART</div>
+                                class="add-this-btn"
+                                @click="elementAddOtherCartAndChangeStatus(o.tags[0])">ADD TO CART</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="code-and-share">
+        <div
+            id="code-and-share"
+            :class="{'active' : cartActive}">
             <h2>
-                <div id="cart-back">
+                <div
+                    id="cart-back"
+                    @click="cartActive = !cartActive">
                     <i
                         class="fa fa-chevron-up"
                         aria-hidden="true"/>
                 </div>
                 <div
                     id="cart-bigger"
-                    class="btn">
+                    class="btn"
+                    @click="cartBigger = !cartBigger">
                     <i
                         class="fa fa-angle-up"
                         aria-hidden="true"/>
@@ -154,19 +160,19 @@
             <div class="bottom-box normal-box">
                 <div class="status-exchange">
                     <div
-                        class="cart-status-btn"
                         :class="{ active: cartType === 'basic' }"
+                        class="cart-status-btn"
                         @click="$store.dispatch('cartSelect', 'basic')">BASIC SET
                     </div>
                     <div
-                        class="cart-status-btn"
                         :class="{ active: cartType === 'double' }"
+                        class="cart-status-btn"
                         @click="$store.dispatch('cartSelect', 'double')">
                         DOUBLE SET
                     </div>
                     <div
-                        class="cart-status-btn"
                         :class="{ active: cartType === 'unlimited' }"
+                        class="cart-status-btn"
                         @click="$store.dispatch('cartSelect', 'unlimited')">OTHER
                     </div>
                 </div>
@@ -218,8 +224,8 @@
                             class="cart-item">
                             {{ displayItems }}
                             <div
-                                @click="$store.dispatch('deleteElementsFromCart', ['common', displayItems === 'basic' ? 'backCase' : 'doubleSetBackCase'])"
-                                class="delete-btn">
+                                class="delete-btn"
+                                @click="$store.dispatch('deleteElementsFromCart', ['common', displayItems === 'basic' ? 'backCase' : 'doubleSetBackCase'])">
                                 <img
                                     src="https://s3cdn.backer-founder.com/lp/zuwatch/img/common/icons/delete.svg"
                                     alt="">
@@ -293,28 +299,28 @@
                         v-for="(element, i) in $store.getters.order">
                         <input
                             v-if="$store.state.locale === 'tw'"
-                            type="hidden"
                             :name="'items[' + i + '][project_id]'"
+                            type="hidden"
                             value="532">
                         <input
                             v-if="$store.state.locale == 'global'"
-                            type="hidden"
                             :name="'items[' + i + '][project_id]'"
+                            type="hidden"
                             value="704">
                         <input
-                            type="hidden"
                             :name="'items[' + i + '][reward_id]'"
-                            :value="element.id">
+                            :value="element.id"
+                            type="hidden">
                         <input
-                            type="hidden"
                             :name="'items[' + i + '][quantity]'"
+                            type="hidden"
                             value="1">
                         <input
                             v-if="cartType === 'double'"
-                            style="display: none"
-                            type="hidden"
                             :name="'items[' + i + '][note]'"
-                            :value="element.note">
+                            :value="element.note"
+                            style="display: none"
+                            type="hidden">
                     </template>
                     <img
                         style="width: 40px; margin-top: 70px;"
@@ -327,6 +333,7 @@
 </template>
 
 <script>
+import eventHub from '@/helper/eventHub';
 import popup from '@/components/popup';
 
 export default {
@@ -338,7 +345,9 @@ export default {
         return {
             activeTab: 'case',
             doubleWhich: 1,
-            selectedElement: null
+            selectedElement: null,
+            cartActive: false,
+            cartBigger: false
         };
     },
     computed: {
@@ -354,6 +363,12 @@ export default {
             return this.$store.state.cart.selected;
         }
         
+    },
+    mounted() {
+        eventHub.$on('toggleCart', () => this.cartActive = !this.cartActive);
+    },
+    beforeDestroy() {
+        eventHub.$off('toggleCart');
     },
     methods: {
         cartThumbnail(cartType, category) {

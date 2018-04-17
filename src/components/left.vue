@@ -1,9 +1,13 @@
 <template>
-    <section class="left">
+    <section
+        :class="{active: hotstyleActive}"
+        class="left">
         <div id="recommend">
             <h2>
                 Style
-                <div id="recommend-back">
+                <div
+                    id="recommend-back"
+                    @click="hotstyleActive = !hotstyleActive">
                     <i
                         class="fa fa-arrow-left"
                         aria-hidden="true"/>
@@ -11,29 +15,29 @@
             </h2>
             <div class="top-box normal-box flex-afs-">
                 <div
-                    @click="elementChange('ca-01', 'zu-02-w', 'me-01')"
+                    @click="elementChange('ca-01', 'zu-02-w', 'me-01'), hotstyleActive = !hotstyleActive"
                     style="background-image: url('https://s3cdn.backer-founder.com/lp/zuwatch/img/main/hotstyle/1.jpg');"
-                    class="btn recommend-style"/>
+                    class="btn recommend-style" />
                 <div
-                    @click="elementChange('ca-03', 'zu-05-w', 'nl-03-s')"
+                    @click="elementChange('ca-03', 'zu-05-w', 'nl-03-s'), hotstyleActive = !hotstyleActive"
                     style="background-image: url('https://s3cdn.backer-founder.com/lp/zuwatch/img/main/hotstyle/2.jpg');"
-                    class="btn recommend-style"/>
+                    class="btn recommend-style" />
                 <div
-                    @click="elementChange('ca-03', 'zu-04-w', 'lc-03')"
+                    @click="elementChange('ca-03', 'zu-04-w', 'lc-03'), hotstyleActive = !hotstyleActive"
                     style="background-image: url('https://s3cdn.backer-founder.com/lp/zuwatch/img/main/hotstyle/3.jpg');"
-                    class="btn recommend-style"/>
+                    class="btn recommend-style" />
                 <div
-                    @click="elementChange('ca-02', 'zu-03-b', 'nl-03-b')"
+                    @click="elementChange('ca-02', 'zu-03-b', 'nl-03-b'), hotstyleActive = !hotstyleActive"
                     style="background-image: url('https://s3cdn.backer-founder.com/lp/zuwatch/img/main/hotstyle/4.jpg');"
-                    class="btn recommend-style"/>
+                    class="btn recommend-style" />
                 <div
-                    @click="elementChange('ca-03', 'zu-01-w', 'lc-02')"
+                    @click="elementChange('ca-03', 'zu-01-w', 'lc-02'), hotstyleActive = !hotstyleActive"
                     style="background-image: url('https://s3cdn.backer-founder.com/lp/zuwatch/img/main/hotstyle/5.jpg');"
-                    class="btn recommend-style"/>
+                    class="btn recommend-style" />
                 <div
-                    @click="elementChange('ca-03', 'zu-10-b', 'ny-03-g')"
+                    @click="elementChange('ca-03', 'zu-10-b', 'ny-03-g'), hotstyleActive = !hotstyleActive"
                     style="background-image: url('https://s3cdn.backer-founder.com/lp/zuwatch/img/main/hotstyle/6.jpg');"
-                    class="btn recommend-style"/>
+                    class="btn recommend-style" />
             </div>
         </div>
         <div
@@ -70,13 +74,21 @@
 </template>
 
 <script>
+import eventHub from '@/helper/eventHub';
+
 // import store from '@/store/index';
 export default {
     name: 'Left',
     data () {
         return {
-
+            hotstyleActive: false,
         };
+    },
+    mounted() {
+        eventHub.$on('toggleHotstyle', () => this.hotstyleActive = !this.hotstyleActive);
+    },
+    beforeDestroy() {
+        eventHub.$off('toggleHotstyle');
     },
     methods: {
         elementChange(a, b, c) {

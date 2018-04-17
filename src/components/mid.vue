@@ -4,7 +4,8 @@
             <div class="mockup-btns">
                 <div
                     data-who="woman"
-                    class="mockup-btn zuwatch-btn">
+                    class="mockup-btn zuwatch-btn"
+                    @click="toggleMockup">
                     <i
                         class="fa fa-eye"
                         aria-hidden="true"/>
@@ -17,19 +18,24 @@
                         class="fa fa-arrow-left"
                         aria-hidden="true"/>
                 </div>
-                <div class="hotstyle-btn">
+                <div
+                    class="hotstyle-btn"
+                    @click="toggleHotstyle">
                     <i
                         class="fa fa-star-o"
                         aria-hidden="true"/>
                 </div>
-                <div class="seecart-btn">
+                <div
+                    class="seecart-btn"
+                    @click="toggleCart">
                     <i
                         class="fa fa-shopping-cart"
                         aria-hidden="true"/>
                 </div>
                 <div
                     data-who="woman"
-                    class="mockup-btn">
+                    class="mockup-btn"
+                    @click="toggleMockup">
                     <i
                         class="fa fa-eye"
                         aria-hidden="true"/>
@@ -53,9 +59,9 @@
             </div>
             <div class="bottom-box preview-btns">
                 <div
-                    @click="$store.dispatch('saveElements', $store.state.preview)"
                     id="save"
-                    class="zuwatch-btn save-btn">
+                    class="zuwatch-btn save-btn"
+                    @click="$store.dispatch('saveElements', $store.state.preview)">
                     <i
                         class="fa fa-floppy-o"
                         aria-hidden="true"/>
@@ -63,29 +69,29 @@
                 </div>
                 <div
                     id="random"
-                    @click="$store.dispatch('getRandomElements')"
-                    class="zuwatch-btn save-btn active">
+                    class="zuwatch-btn save-btn active"
+                    @click="$store.dispatch('getRandomElements')">
                     <i
                         class="fa fa-random"
                         aria-hidden="true"/>
                     Random
                 </div>
-                <!-- <div
-                    v-if="status !== 'unlimited'"
+                <div
+                    v-if="$store.state.cart.selected !== 'unlimited'"
                     id="checkcart"
                     class="zuwatch-btn save-btn">
                     My Cart
                 </div>
                 <div
-                    v-if="status === 'unlimited'"
-                    @click="elementsAddOtherCart()"
+                    v-if="$store.state.cart.selected === 'unlimited'"
                     id="addtocart"
-                    class="zuwatch-btn save-btn">
+                    class="zuwatch-btn save-btn"
+                    @click="elementsAddOtherCart()">
                     <i
                         class="fa fa-plus-circle"
                         aria-hidden="true"/>
                     Add to Cart
-                </div> -->
+                </div>
             </div>
         </div>
         <!-- <div
@@ -104,15 +110,37 @@
 </template>
 
 <script>
+import eventHub from '@/helper/eventHub';
+import mockup from '@/components/mockup';
+
 export default {
+    components: {
+        mockup
+    },
     data() {
         return {
-            
+            showMockup: false
         };
     },
 
     methods: {
-        
+        elementsAddOtherCart() {
+            _.forEach(Object.values(this.$store.state.preview), (v) => {
+                this.$store.dispatch('addToCart', ['others', v]);
+            });
+        },
+
+        toggleMockup() {
+            eventHub.$emit('toggleMockup');
+        },
+
+        toggleCart() {
+            eventHub.$emit('toggleCart');
+        },
+
+        toggleHotstyle() {
+            eventHub.$emit('toggleHotstyle');
+        }
     }
 };
 </script>
