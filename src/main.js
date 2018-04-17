@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import store from '@/store/index';
 import {in_stock} from '@/helper/filter';
 
 import '../src/assets/sass/app.scss';
@@ -16,6 +17,7 @@ Vue.filter('in_stock', in_stock);
 new Vue({
     el: '#app',
     router,
+    store,
     components: { App },
     template: '<App/>'
 });

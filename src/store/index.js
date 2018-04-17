@@ -8,6 +8,7 @@ Vue.use(Vuex, axios);
 
 export default new Vuex.Store({
     state: {    // = data
+        isLoading: true,
         preview: {
             case: 'ca-01',   // 錶框
             dial: 'zu-01-w',   // 錶面⌚️
@@ -216,6 +217,9 @@ export default new Vuex.Store({
         
     },
     actions: {  // methods
+        onLoading(context, status) {
+            context.commit('onLoading', status);
+        },
         fetchData(context) {
             let url = 'https://zuwatch.backme.tw/api/projects/532.json?token=a788fa70032f09bdfd3fe5af2b3ae6f3';
 
@@ -266,6 +270,9 @@ export default new Vuex.Store({
         }
     },
     mutations: {
+        onLoading(state, status) {
+            state.isLoading = status;
+        },
         setElements(state, elements) {
             state.elementsAll = elements;
         },

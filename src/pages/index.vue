@@ -23,7 +23,6 @@
         </footer>
         <mockup/>
     </div>
-
 </template>
 
 <script>
@@ -37,11 +36,13 @@ export default {
         left, mid, right, mockup
     },
     created() {
+        this.$store.dispatch('onLoading', true);
         this.$store.dispatch('fetchData');
     },
     mounted() {
-        console.log('loaded');
-        this.$store.dispatch('onLoading', false);
+        setTimeout(() => {
+            this.$store.dispatch('onLoading', false);
+        }, 3000);
     }
 
 };
