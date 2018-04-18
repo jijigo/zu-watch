@@ -213,12 +213,19 @@ export default new Vuex.Store({
                 return volumeOfCart >= 1 ? 'CHECKOUT' : `${volumeOfCart} / 1`;
             }
         }
-
-        
     },
     actions: {  // methods
         onLoading(context, status) {
             context.commit('onLoading', status);
+        },
+        checkLocale(context) {
+            if (location.host.indexOf('jp') !== 0) {
+                context.commit('changeLocale', 'jp');
+            } else if (location.host.indexOf('global') !== 0) {
+                context.commit('changeLocale', 'global');
+            } else {
+                context.commit('changeLocale', 'tw');
+            }
         },
         fetchData(context) {
             let url = 'https://zuwatch.backme.tw/api/projects/532.json?token=a788fa70032f09bdfd3fe5af2b3ae6f3';
@@ -270,6 +277,9 @@ export default new Vuex.Store({
         }
     },
     mutations: {
+        changeLocale(locale) {
+            this.locale = locale;
+        },
         onLoading(state, status) {
             state.isLoading = status;
         },
