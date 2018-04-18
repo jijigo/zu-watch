@@ -219,21 +219,27 @@ export default new Vuex.Store({
             context.commit('onLoading', status);
         },
         checkLocale(context) {
-            if (location.host.indexOf('jp') !== 0) {
+            if (location.host.indexOf('jp') !== -1) {
                 context.commit('changeLocale', 'jp');
-            } else if (location.host.indexOf('global') !== 0) {
+            } else if (location.host.indexOf('global') !== -1) {
                 context.commit('changeLocale', 'global');
             } else {
                 context.commit('changeLocale', 'tw');
             }
         },
-        fetchData(context) {
-            let url = 'https://zuwatch.backme.tw/api/projects/532.json?token=a788fa70032f09bdfd3fe5af2b3ae6f3';
-
+        fetchData({commit, state}) {
+            let url;
+            if (state.locale === 'tw') {
+                url =
+                  'https://zuwatch.backme.tw/api/projects/532.json?token=a788fa70032f09bdfd3fe5af2b3ae6f3';
+            } else if (state.locale === 'global') {
+                url =
+                  'https://zuwatch.backme.tw/api/projects/704.json?token=a788fa70032f09bdfd3fe5af2b3ae6f3';
+            }
             axios.get(url)
                 .then((response) => {
                     let publishEl = response.data.rewards.filter((el) => el.status === 'publish');
-                    context.commit('setElements', publishEl);
+                    commit('setElements', publishEl);
                 })
                 .catch((error) => Promise.reject(error));
         },
@@ -277,8 +283,8 @@ export default new Vuex.Store({
         }
     },
     mutations: {
-        changeLocale(locale) {
-            this.locale = locale;
+        changeLocale(state, locale) {
+            state.locale = locale;
         },
         onLoading(state, status) {
             state.isLoading = status;

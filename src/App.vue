@@ -26,6 +26,7 @@ export default {
     },
     created() {
         this.$store.dispatch('onLoading', true);
+        this.$store.dispatch('checkLocale');
     },
     mounted() {
     }
